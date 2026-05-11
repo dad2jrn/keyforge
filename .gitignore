@@ -18,6 +18,7 @@ coverage/
 !.vscode/extensions.json
 !.vscode/*.code-snippets
 !*.code-workspace
+.clineignore
 
 # Built Visual Studio Code Extensions
 *.vsix

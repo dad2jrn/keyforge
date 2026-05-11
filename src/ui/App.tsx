@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { appConfig } from '../app/config';
-import { applyTheme, persistThemePreference, readThemePreference, type ThemePreference } from '../app/theme';
 import { SqliteWorkerClient } from '../db/sqliteClient';
 import type { DatabaseDiagnostics, DiagnosticWriteResult, TransactionProbeResult } from '../domain/database';
 import { DatabaseService } from '../services/databaseService';
 import type { FoundationSummary } from '../services/foundationService';
 import { FoundationService } from '../services/foundationService';
 import { StaticFoundationRepository } from '../repositories/staticFoundationRepository';
+import { ThemeToggle } from './ThemeToggle';
 
 const statusClassNames = {
   ready: 'chip chip-success',
@@ -28,12 +28,6 @@ export function App() {
   const [databaseDiagnostics, setDatabaseDiagnostics] = useState<DatabaseDiagnostics | null>(null);
   const [diagnosticWriteResult, setDiagnosticWriteResult] = useState<DiagnosticWriteResult | null>(null);
   const [transactionProbeResult, setTransactionProbeResult] = useState<TransactionProbeResult | null>(null);
-  const [themePreference, setThemePreference] = useState<ThemePreference>(() => readThemePreference());
-
-  useEffect(() => {
-    applyTheme(themePreference);
-    persistThemePreference(themePreference);
-  }, [themePreference]);
 
   useEffect(() => {
     void service.getSummary().then(setSummary);
@@ -89,19 +83,7 @@ export function App() {
             <p className="help-text">Epic 0 scaffold: local-first, secure-by-default, and ready for GitHub Pages.</p>
           </div>
           <div className="cluster" role="group" aria-label="Theme controls">
-            <label className="form-field">
-              <span>Theme</span>
-              <select
-                className="select"
-                value={themePreference}
-                onChange={(event) => setThemePreference(event.target.value as ThemePreference)}
-                aria-label="Theme preference"
-              >
-                <option value="system">System</option>
-                <option value="dark">Dark</option>
-                <option value="light">Light</option>
-              </select>
-            </label>
+            <ThemeToggle />
             <button className="btn btn-warning" type="button">Mask Sensitive</button>
           </div>
         </header>

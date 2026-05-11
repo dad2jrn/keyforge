@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { ThemeProvider } from '../app/ThemeProvider';
 import { App } from './App';
 
 vi.mock('../db/sqliteClient', () => ({
@@ -35,9 +36,14 @@ vi.mock('../db/sqliteClient', () => ({
 
 describe('App', () => {
   it('renders Epic 1 SQLite diagnostics behind the service boundary', async () => {
-    render(<App />);
+    render(
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>,
+    );
 
     expect(screen.getByRole('heading', { name: 'Project Foundation' })).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: /Theme preference/ })).toBeInTheDocument();
     expect(await screen.findByText('Vite static app')).toBeInTheDocument();
     expect(await screen.findByText('3.test')).toBeInTheDocument();
     expect(screen.getByText('Passed (SELECT 1 + 1)')).toBeInTheDocument();
