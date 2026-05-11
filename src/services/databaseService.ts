@@ -1,5 +1,5 @@
-import type { DatabaseDiagnostics, DiagnosticWriteResult, TransactionProbeResult } from '../domain/database';
-import type { DatabaseClient } from '../db/sqliteClient';
+import { SqliteWorkerClient, type DatabaseClient } from '../db/sqliteClient';
+import type { DatabaseDiagnostics } from '../domain/database';
 
 export interface DatabaseSummary {
     readonly diagnostics: DatabaseDiagnostics;
@@ -11,12 +11,11 @@ export class DatabaseService {
     async getSummary(): Promise<DatabaseSummary> {
         return { diagnostics: await this.client.getDiagnostics() };
     }
+}
 
-    recordDiagnosticWrite(message: string): Promise<DiagnosticWriteResult> {
-        return this.client.recordDiagnosticWrite(message);
-    }
+let diagnosticsService: DatabaseService | null = null;
 
-    runRollbackProbe(): Promise<TransactionProbeResult> {
-        return this.client.runRollbackProbe();
-    }
+export function getDiagnosticsService(): DatabaseService {
+    diagnosticsService ??= new DatabaseService(new SqliteWorkerClient());
+    return diagnosticsService;
 }

@@ -8,6 +8,7 @@ import { PinCalculatorPage } from '../pages/PinCalculatorPage';
 import { KeyholdersPage } from '../pages/KeyholdersPage';
 import { ReportsPage } from '../pages/ReportsPage';
 import { BackupSecurityPage } from '../pages/BackupSecurityPage';
+import { DiagnosticsPage } from '../pages/DiagnosticsPage';
 import { SettingsPage } from '../pages/SettingsPage';
 
 export interface AppRoute {
@@ -65,6 +66,12 @@ export const appRoutes: readonly AppRoute[] = [
     title: 'Backup / Security',
     description: 'Local backup, restore, and security posture placeholder.',
     element: <BackupSecurityPage />,
+  },
+  {
+    id: 'diagnostics',
+    title: 'Diagnostics',
+    description: 'SQLite WASM worker diagnostics and readable local engine status.',
+    element: <DiagnosticsPage />,
   },
   {
     id: 'settings',

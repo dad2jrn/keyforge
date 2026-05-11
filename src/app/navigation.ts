@@ -7,6 +7,7 @@ export type AppRouteId =
   | 'keyholders'
   | 'reports'
   | 'backup-security'
+  | 'diagnostics'
   | 'settings';
 
 export interface NavigationItem {
@@ -25,7 +26,8 @@ export const navigationItems: readonly NavigationItem[] = [
   { id: 'keyholders', label: 'Keyholders', path: '/keyholders', shortcut: '6' },
   { id: 'reports', label: 'Reports', path: '/reports', shortcut: '7' },
   { id: 'backup-security', label: 'Backup / Security', path: '/backup-security', shortcut: '8' },
-  { id: 'settings', label: 'Settings', path: '/settings', shortcut: '9' },
+  { id: 'diagnostics', label: 'Diagnostics', path: '/diagnostics', shortcut: '9' },
+  { id: 'settings', label: 'Settings', path: '/settings', shortcut: '0' },
 ] as const;
 
 export function routeToHash(path: string): string {

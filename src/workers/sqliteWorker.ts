@@ -1,19 +1,16 @@
 import sqlite3InitModule from '@sqlite.org/sqlite-wasm';
-import type { DatabaseCompatibility, DatabaseDiagnostics, DiagnosticWriteResult, TransactionProbeResult } from '../domain/database';
-import { latestLocalSchemaVersion, localMigrations } from '../migrations/localMigrations';
+import type { DatabaseCompatibility, DatabaseDiagnostics } from '../domain/database';
 import type { SqliteWorkerRequest, SqliteWorkerResponse } from '../db/sqliteProtocol';
-import { applyMigrations, countRows, getCurrentSchemaVersion, LocalTransactionHelper, type LocalDatabaseLike } from '../db/localTransaction';
 
 type SqliteModule = Awaited<ReturnType<typeof sqlite3InitModule>>;
+type DiagnosticDatabase = InstanceType<SqliteModule['oo1']['DB']>;
 
 interface DatabaseState {
     readonly sqlite3: SqliteModule;
-    readonly db: LocalDatabaseLike & { readonly filename: string };
-    readonly storageMode: 'opfs' | 'transient';
+    readonly db: DiagnosticDatabase;
     readonly compatibility: DatabaseCompatibility;
 }
 
-const databasePath = '/keyforge-local.sqlite3';
 let statePromise: Promise<DatabaseState> | null = null;
 
 self.addEventListener('message', (event: MessageEvent<SqliteWorkerRequest>) => {
@@ -23,20 +20,16 @@ self.addEventListener('message', (event: MessageEvent<SqliteWorkerRequest>) => {
 async function respond(request: SqliteWorkerRequest): Promise<void> {
     try {
         const payload = await handleRequest(request);
-        postMessage({ id: request.id, ok: true, type: request.type, payload } as SqliteWorkerResponse);
+        postMessage({ id: request.id, ok: true, type: request.type, payload } satisfies SqliteWorkerResponse);
     } catch (error) {
-        postMessage({ id: request.id, ok: false, error: error instanceof Error ? error.message : String(error) } as SqliteWorkerResponse);
+        postMessage({ id: request.id, ok: false, error: readableError(error) } satisfies SqliteWorkerResponse);
     }
 }
 
-async function handleRequest(request: SqliteWorkerRequest) {
+async function handleRequest(request: SqliteWorkerRequest): Promise<DatabaseDiagnostics> {
     switch (request.type) {
         case 'diagnostics':
             return getDiagnostics();
-        case 'recordDiagnosticWrite':
-            return recordDiagnosticWrite(request.message);
-        case 'runRollbackProbe':
-            return runRollbackProbe();
     }
 }
 
@@ -46,124 +39,45 @@ async function getState(): Promise<DatabaseState> {
 }
 
 async function initializeDatabase(): Promise<DatabaseState> {
-    const sqlite3 = await sqlite3InitModule();
-    const compatibility = buildCompatibility(sqlite3);
-    const hasOpfs = 'opfs' in sqlite3 && typeof sqlite3.oo1.OpfsDb === 'function';
-    const db = hasOpfs
-        ? new sqlite3.oo1.OpfsDb(databasePath, 'c') as LocalDatabaseLike & { readonly filename: string }
-        : new sqlite3.oo1.DB(':memory:', 'c') as LocalDatabaseLike & { readonly filename: string };
+    assertWebAssemblySupport();
 
-    db.exec('PRAGMA foreign_keys = ON;');
-    applyMigrations(db, localMigrations);
+    const sqlite3 = await sqlite3InitModule();
+    const db = new sqlite3.oo1.DB(':memory:', 'c');
 
     return {
         sqlite3,
         db,
-        storageMode: hasOpfs ? 'opfs' : 'transient',
-        compatibility,
+        compatibility: buildCompatibility(sqlite3),
     };
 }
 
 async function getDiagnostics(): Promise<DatabaseDiagnostics> {
     try {
         const state = await getState();
-        const testQueryValue = Number(state.db.selectValue('SELECT 1 + 1;') ?? 0);
-        const schemaVersion = getCurrentSchemaVersion(state.db);
+        const version = state.db.selectValue('SELECT sqlite_version();');
+        const testQueryValue = state.db.selectValue('SELECT 1 + 1;');
 
         return {
-            status: state.storageMode === 'opfs' ? 'ready' : 'degraded',
-            sqliteVersion: state.sqlite3.version.libVersion,
-            storageMode: state.storageMode,
-            databasePath: state.db.filename,
-            schemaVersion,
-            latestMigrationVersion: latestLocalSchemaVersion,
-            testQueryValue,
+            status: 'ready',
+            sqliteVersion: typeof version === 'string' ? version : state.sqlite3.version.libVersion,
+            testQueryValue: typeof testQueryValue === 'number' ? testQueryValue : Number(testQueryValue),
             compatibility: state.compatibility,
             error: null,
         };
     } catch (error) {
         return {
-            status: 'error',
+            status: isUnsupportedError(error) ? 'unsupported' : 'error',
             sqliteVersion: null,
-            storageMode: null,
-            databasePath: null,
-            schemaVersion: null,
-            latestMigrationVersion: latestLocalSchemaVersion,
             testQueryValue: null,
-            compatibility: fallbackCompatibility(),
-            error: error instanceof Error ? error.message : String(error),
+            compatibility: fallbackCompatibility(readableError(error)),
+            error: readableError(error),
         };
     }
 }
 
-async function recordDiagnosticWrite(message: string): Promise<DiagnosticWriteResult> {
-    const { db } = await getState();
-    const helper = new LocalTransactionHelper(db);
-    const now = new Date().toISOString();
-    const id = crypto.randomUUID();
-
-    helper.transaction(() => {
-        db.exec(`INSERT INTO diagnostic_writes (id, tenant_id, message, created_at, updated_at)
-            VALUES ('${id}', 'local', '${message.replaceAll("'", "''")}', '${now}', '${now}');`);
-        helper.writeAuditEvent({
-            entityType: 'diagnostic_writes',
-            entityId: id,
-            action: 'create',
-            note: 'Diagnostic write committed with audit event in the same transaction.',
-        });
-    });
-
-    return {
-        inserted: true,
-        diagnosticWriteCount: countRows(db, 'diagnostic_writes'),
-        auditLogCount: countRows(db, 'audit_log'),
-    };
-}
-
-async function runRollbackProbe(): Promise<TransactionProbeResult> {
-    const { db } = await getState();
-    const helper = new LocalTransactionHelper(db);
-    const beforeDiagnostics = countRows(db, 'diagnostic_writes');
-    const beforeAudit = countRows(db, 'audit_log');
-    let preventedNestedTransaction = false;
-
-    try {
-        helper.transaction(() => {
-            preventedNestedTransaction = catchNestedTransaction(helper);
-            const now = new Date().toISOString();
-            db.exec(`INSERT INTO diagnostic_writes (id, tenant_id, message, created_at, updated_at)
-                VALUES ('${crypto.randomUUID()}', 'local', 'rollback probe', '${now}', '${now}');`);
-            helper.writeAuditEvent({
-                entityType: 'diagnostic_writes',
-                entityId: null,
-                action: 'rollback_probe',
-                note: 'This audit event must roll back with the diagnostic write.',
-            });
-            throw new Error('Intentional rollback probe failure.');
-        });
-    } catch (error) {
-        if (!(error instanceof Error) || error.message !== 'Intentional rollback probe failure.') {
-            throw error;
-        }
-    }
-
-    const afterDiagnostics = countRows(db, 'diagnostic_writes');
-    const afterAudit = countRows(db, 'audit_log');
-
-    return {
-        rolledBack: beforeDiagnostics === afterDiagnostics && beforeAudit === afterAudit,
-        preventedNestedTransaction,
-        diagnosticWriteCount: afterDiagnostics,
-        auditLogCount: afterAudit,
-    };
-}
-
-function catchNestedTransaction(helper: LocalTransactionHelper): boolean {
-    try {
-        helper.transaction(() => undefined);
-        return false;
-    } catch {
-        return true;
+function assertWebAssemblySupport(): void {
+    if (typeof WebAssembly === 'undefined') {
+        throw new Error('SQLite WASM is unsupported in this browser because WebAssembly is unavailable.');
     }
 }
 
@@ -171,8 +85,8 @@ function buildCompatibility(sqlite3: SqliteModule): DatabaseCompatibility {
     const crossOriginIsolated = Boolean(self.crossOriginIsolated);
     const opfsAvailable = 'opfs' in sqlite3 && typeof sqlite3.oo1.OpfsDb === 'function';
     const warnings = [
-        ...(!crossOriginIsolated ? ['Cross-origin isolation is unavailable; OPFS may not be usable in this browser/session.'] : []),
-        ...(!opfsAvailable ? ['OPFS persistence is unavailable; the database is running in transient storage.'] : []),
+        ...(!crossOriginIsolated ? ['Cross-origin isolation is unavailable; this diagnostic uses an in-memory SQLite database.'] : []),
+        ...(!opfsAvailable ? ['OPFS persistence is unavailable; this diagnostic uses an in-memory SQLite database.'] : []),
     ];
 
     return {
@@ -183,11 +97,19 @@ function buildCompatibility(sqlite3: SqliteModule): DatabaseCompatibility {
     };
 }
 
-function fallbackCompatibility(): DatabaseCompatibility {
+function fallbackCompatibility(message: string): DatabaseCompatibility {
     return {
         opfsAvailable: false,
         crossOriginIsolated: Boolean(self.crossOriginIsolated),
         workerAvailable: true,
-        warnings: ['SQLite WASM failed to initialize.'],
+        warnings: [message],
     };
+}
+
+function isUnsupportedError(error: unknown): boolean {
+    return readableError(error).toLowerCase().includes('unsupported');
+}
+
+function readableError(error: unknown): string {
+    return error instanceof Error ? error.message : String(error);
 }

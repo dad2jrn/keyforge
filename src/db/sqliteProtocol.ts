@@ -1,14 +1,10 @@
-import type { DatabaseDiagnostics, DiagnosticWriteResult, TransactionProbeResult } from '../domain/database';
+import type { DatabaseDiagnostics } from '../domain/database';
 
 export type SqliteWorkerRequest =
-    | { readonly id: number; readonly type: 'diagnostics' }
-    | { readonly id: number; readonly type: 'recordDiagnosticWrite'; readonly message: string }
-    | { readonly id: number; readonly type: 'runRollbackProbe' };
+    | { readonly id: number; readonly type: 'diagnostics' };
 
 export type SqliteWorkerSuccessResponse =
-    | { readonly id: number; readonly ok: true; readonly type: 'diagnostics'; readonly payload: DatabaseDiagnostics }
-    | { readonly id: number; readonly ok: true; readonly type: 'recordDiagnosticWrite'; readonly payload: DiagnosticWriteResult }
-    | { readonly id: number; readonly ok: true; readonly type: 'runRollbackProbe'; readonly payload: TransactionProbeResult };
+    | { readonly id: number; readonly ok: true; readonly type: 'diagnostics'; readonly payload: DatabaseDiagnostics };
 
 export interface SqliteWorkerErrorResponse {
     readonly id: number;

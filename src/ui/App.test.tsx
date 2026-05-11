@@ -1,7 +1,26 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { App } from './App';
+
+vi.mock('../services/databaseService', () => ({
+  getDiagnosticsService: () => ({
+    getSummary: async () => ({
+      diagnostics: {
+        status: 'ready',
+        sqliteVersion: '3.53.0-test',
+        testQueryValue: 2,
+        compatibility: {
+          opfsAvailable: false,
+          crossOriginIsolated: false,
+          workerAvailable: true,
+          warnings: ['OPFS persistence is unavailable; this diagnostic uses an in-memory SQLite database.'],
+        },
+        error: null,
+      },
+    }),
+  }),
+}));
 
 describe('App', () => {
   beforeEach(() => {
@@ -33,6 +52,17 @@ describe('App', () => {
     expect(screen.getByRole('heading', { name: heading, level: 1 })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: heading, level: 2 })).toBeInTheDocument();
     expect(screen.getByText('Placeholder')).toBeInTheDocument();
+  });
+
+  it('renders SQLite diagnostics through the service abstraction', async () => {
+    window.location.hash = '#/diagnostics';
+
+    render(<App />);
+
+    expect(screen.getByRole('heading', { name: 'Diagnostics', level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'SQLite Engine Diagnostics', level: 2 })).toBeInTheDocument();
+    expect(await screen.findByText('3.53.0-test')).toBeInTheDocument();
+    expect(screen.getByText('2')).toBeInTheDocument();
   });
 
   it.each([

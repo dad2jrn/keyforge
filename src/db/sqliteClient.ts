@@ -1,10 +1,8 @@
-import type { DatabaseDiagnostics, DiagnosticWriteResult, TransactionProbeResult } from '../domain/database';
+import type { DatabaseDiagnostics } from '../domain/database';
 import type { SqliteWorkerRequest, SqliteWorkerResponse, SqliteWorkerResponseFor } from './sqliteProtocol';
 
 export interface DatabaseClient {
     getDiagnostics(): Promise<DatabaseDiagnostics>;
-    recordDiagnosticWrite(message: string): Promise<DiagnosticWriteResult>;
-    runRollbackProbe(): Promise<TransactionProbeResult>;
 }
 
 type PendingRequest = {
@@ -26,14 +24,6 @@ export class SqliteWorkerClient implements DatabaseClient {
 
     getDiagnostics(): Promise<DatabaseDiagnostics> {
         return this.request({ id: this.nextRequestId, type: 'diagnostics' });
-    }
-
-    recordDiagnosticWrite(message: string): Promise<DiagnosticWriteResult> {
-        return this.request({ id: this.nextRequestId, type: 'recordDiagnosticWrite', message });
-    }
-
-    runRollbackProbe(): Promise<TransactionProbeResult> {
-        return this.request({ id: this.nextRequestId, type: 'runRollbackProbe' });
     }
 
     dispose(): void {
