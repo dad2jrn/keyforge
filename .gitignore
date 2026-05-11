@@ -49,5 +49,30 @@ STYLE.md
 *.tar
 *.gz
 
+# Exported sensitive reports — never commit plaintext locksmith data as PDF
+*.pdf
+
+# Cryptographic key material — never commit private keys or certificates
+*.pem
+*.key
+*.p12
+*.pfx
+*.cer
+*.crt
+
+# Log files
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Test output (Playwright, deferred but pre-blocked)
+test-results/
+playwright-report/
+blob-report/
+
 # OS files
 .DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
