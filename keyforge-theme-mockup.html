@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>KeyForge Theme Mockup</title>
+<style>
+:root {
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: #111827;
+  color: #e5e7eb;
+}
+.page {
+  padding: 28px;
+}
+.header {
+  max-width: 1480px;
+  margin: 0 auto 24px;
+}
+.header h1 {
+  margin: 0;
+  font-size: 34px;
+  letter-spacing: -0.04em;
+}
+.header p {
+  margin: 8px 0 0;
+  color: #cbd5e1;
+  max-width: 900px;
+  line-height: 1.5;
+}
+.theme-grid {
+  max-width: 1480px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  align-items: start;
+}
+.theme {
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  background: linear-gradient(135deg, var(--color-bg-gradient-start), var(--color-bg-gradient-mid) 50%, var(--color-bg-gradient-end));
+  color: var(--color-text);
+  box-shadow: 0 24px 70px rgba(0,0,0,.32);
+}
+.theme.dark {
+  --color-bg: #0f172a;
+  --color-bg-gradient-start: #020617;
+  --color-bg-gradient-mid: #0f172a;
+  --color-bg-gradient-end: #111827;
+  --color-sidebar: rgba(2, 6, 23, 0.88);
+  --color-surface: rgba(17, 24, 39, 0.86);
+  --color-surface-solid: #111827;
+  --color-surface-muted: #1f2937;
+  --color-border: #334155;
+  --color-border-subtle: rgba(148, 163, 184, 0.18);
+  --color-text: #e5e7eb;
+  --color-text-strong: #ffffff;
+  --color-text-muted: #94a3b8;
+  --color-text-soft: #cbd5e1;
+  --color-accent: #60a5fa;
+  --color-accent-strong: #2563eb;
+  --color-accent-muted: #172554;
+  --color-accent-text: #bfdbfe;
+  --color-success-bg: rgba(6, 78, 59, 0.60);
+  --color-success-text: #a7f3d0;
+  --color-warning-bg: rgba(113, 63, 18, 0.60);
+  --color-warning-text: #fde68a;
+  --color-danger-bg: rgba(127, 29, 29, 0.60);
+  --color-danger-text: #fecaca;
+  --shadow-card: 0 18px 40px rgba(0, 0, 0, 0.22);
+}
+.theme.light {
+  --color-bg: #f3f6fb;
+  --color-bg-gradient-start: #eef3f9;
+  --color-bg-gradient-mid: #f3f6fb;
+  --color-bg-gradient-end: #e9eef7;
+  --color-sidebar: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-solid: #ffffff;
+  --color-surface-muted: #f8fafc;
+  --color-border: #d8e0ea;
+  --color-border-subtle: rgba(100, 116, 139, 0.18);
+  --color-text: #172033;
+  --color-text-strong: #0f172a;
+  --color-text-muted: #64748b;
+  --color-text-soft: #475569;
+  --color-accent: #2563eb;
+  --color-accent-strong: #1d4ed8;
+  --color-accent-muted: #dbeafe;
+  --color-accent-text: #1e3a8a;
+  --color-success-bg: #d1fae5;
+  --color-success-text: #065f46;
+  --color-warning-bg: #fef3c7;
+  --color-warning-text: #92400e;
+  --color-danger-bg: #fee2e2;
+  --color-danger-text: #991b1b;
+  --shadow-card: 0 18px 38px rgba(15, 23, 42, 0.08);
+}
+.mock-shell {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  min-height: 760px;
+}
+.sidebar {
+  background: var(--color-sidebar);
+  border-right: 1px solid var(--color-border);
+  padding: 18px 14px;
+}
+.brand {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+.logo {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  background: radial-gradient(circle at 30% 20%, #93c5fd, #2563eb 45%, #172554);
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  color: white;
+  box-shadow: 0 12px 22px rgba(37, 99, 235, 0.24);
+}
+.brand-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--color-text-strong);
+  letter-spacing: -.02em;
+}
+.brand-sub {
+  font-size: 10px;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+.nav-label {
+  color: var(--color-text-muted);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin: 16px 8px 7px;
+}
+.nav-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--color-text-soft);
+  padding: 9px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  margin: 3px 0;
+}
+.nav-item.active {
+  background: var(--color-accent-muted);
+  color: var(--color-text-strong);
+}
+.main {
+  padding: 18px;
+  min-width: 0;
+}
+.theme-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.theme-title h2 {
+  margin: 0;
+  font-size: 22px;
+  color: var(--color-text-strong);
+  letter-spacing: -.035em;
+}
+.theme-title p {
+  margin: 5px 0 0;
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+.search {
+  width: 220px;
+  background: var(--color-surface-muted);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-size: 12px;
+}
+.grid {
+  display: grid;
+  gap: 12px;
+}
+.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  padding: 14px;
+  box-shadow: var(--shadow-card);
+}
+.card-title {
+  margin: 0 0 8px;
+  color: var(--color-accent-text);
+  font-size: 13px;
+  font-weight: 800;
+}
+.metric-label {
+  color: var(--color-text-muted);
+  font-size: 11px;
+}
+.metric {
+  color: var(--color-text-strong);
+  font-size: 26px;
+  font-weight: 900;
+  margin-top: 2px;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--color-accent-muted);
+  color: var(--color-accent-text);
+  font-size: 10px;
+  border: 1px solid rgba(96,165,250,.35);
+  white-space: nowrap;
+}
+.chip.good { background: var(--color-success-bg); color: var(--color-success-text); border-color: rgba(5,150,105,.35); }
+.chip.warn { background: var(--color-warning-bg); color: var(--color-warning-text); border-color: rgba(217,119,6,.35); }
+.chip.bad { background: var(--color-danger-bg); color: var(--color-danger-text); border-color: rgba(220,38,38,.35); }
+.btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.btn {
+  background: var(--color-surface-muted);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 11px;
+  padding: 8px 10px;
+  font-size: 11px;
+}
+.btn.primary { background: var(--color-accent-strong); border-color: var(--color-accent); color: #fff; }
+.btn.warn { background: var(--color-warning-bg); color: var(--color-warning-text); border-color: rgba(217,119,6,.35); }
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+.table th, .table td {
+  padding: 8px 6px;
+  border-bottom: 1px solid var(--color-border-subtle);
+  text-align: left;
+}
+.table th {
+  color: var(--color-accent-text);
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: .06em;
+}
+.masked {
+  letter-spacing: .22em;
+  color: var(--color-text-soft);
+  font-weight: 800;
+  user-select: none;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+label {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: 10px;
+  margin-bottom: 4px;
+}
+.input {
+  width: 100%;
+  background: var(--color-surface-muted);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 8px 9px;
+  font-size: 11px;
+}
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 12px;
+}
+.tree {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.8;
+}
+.tree span {
+  padding: 3px 6px;
+  border-radius: 8px;
+}
+.tree .selected {
+  background: var(--color-accent-strong);
+  color: white;
+}
+.pin-grid {
+  display: grid;
+  grid-template-columns: 62px repeat(6, 1fr);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  overflow: hidden;
+  font-size: 10px;
+}
+.pin-grid div {
+  padding: 9px 6px;
+  border-right: 1px solid var(--color-border-subtle);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+.pin-grid div:nth-child(7n) { border-right: none; }
+.pin-head {
+  background: var(--color-accent-muted);
+  color: var(--color-accent-text);
+  font-weight: 800;
+}
+.callout {
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-size: 11px;
+  line-height: 1.45;
+  background: var(--color-warning-bg);
+  color: var(--color-warning-text);
+  border: 1px solid rgba(217,119,6,.35);
+}
+.report {
+  background: #f8fafc;
+  color: #0f172a;
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: var(--shadow-card);
+}
+.report .card-title { color: #1d4ed8; }
+.report .table th { color: #1d4ed8; }
+.report .table td, .report .table th { border-color: #cbd5e1; }
+.small-note {
+  color: var(--color-text-muted);
+  font-size: 10px;
+  line-height: 1.4;
+}
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+.swatch {
+  height: 38px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+}
+.bg { background: var(--color-bg); }
+.surface { background: var(--color-surface); }
+.muted { background: var(--color-surface-muted); }
+.accent { background: var(--color-accent-strong); }
+.border { background: var(--color-border); }
+@media (max-width: 1300px) {
+  .theme-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .mock-shell { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .cols-3, .cols-2, .split { grid-template-columns: 1fr; }
+  .theme-header { flex-direction: column; align-items: stretch; }
+  .search { width: 100%; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <h1>KeyForge Local Theme Mockup</h1>
+    <p>This mockup shows the same UI patterns in both themes: dashboard metrics, navigation, cards, forms, tables, chips, pinning worksheets, reports, security warnings, and sensitive data masking.</p>
+  </div>
+
+  <div class="theme-grid">
+
+    <section class="theme dark">
+      <div class="mock-shell">
+        <aside class="sidebar">
+          <div class="brand">
+            <div class="logo">K</div>
+            <div><div class="brand-title">KeyForge</div><div class="brand-sub">Dark theme</div></div>
+          </div>
+          <div class="nav-label">Workspace</div>
+          <div class="nav-item active">Dashboard <span>⌘1</span></div>
+          <div class="nav-item">Key Systems <span>⌘2</span></div>
+          <div class="nav-item">Cylinders <span>⌘3</span></div>
+          <div class="nav-item">Keyholders <span>⌘4</span></div>
+          <div class="nav-item">Reports <span>⌘5</span></div>
+          <div class="nav-label">Security</div>
+          <div class="nav-item">Backup & Lock <span>⌘6</span></div>
+        </aside>
+        <main class="main">
+          <div class="theme-header">
+            <div class="theme-title"><h2>Dark Secure Operations</h2><p>Deep navy shell, slate cards, blue accents.</p></div>
+            <input class="search" placeholder="Search key, door, cylinder..." />
+          </div>
+
+          <div class="grid cols-3">
+            <div class="card"><div class="metric-label">Openings</div><div class="metric">186</div><span class="chip good">172 active</span></div>
+            <div class="card"><div class="metric-label">Cylinders</div><div class="metric">214</div><span class="chip warn">8 review</span></div>
+            <div class="card"><div class="metric-label">Lost keys</div><div class="metric">2</div><span class="chip bad">Rekey risk</span></div>
+          </div>
+
+          <div style="height:12px"></div>
+          <div class="split">
+            <div class="card">
+              <h3 class="card-title">Key System Tree</h3>
+              <div class="tree">
+                <div>▾ <span>GGM A</span></div>
+                <div>&nbsp;&nbsp;▾ <span>GM AA</span></div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;▾ <span class="selected">MK AA1</span></div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• <span>CK AA1-001</span></div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• <span>CK AA1-002</span></div>
+              </div>
+              <div class="btn-row"><button class="btn primary">Add Key</button><button class="btn">Reserve</button></div>
+            </div>
+            <div class="card">
+              <h3 class="card-title">Selected Key</h3>
+              <div class="form-grid">
+                <div><label>Symbol</label><input class="input" value="AA1" /></div>
+                <div><label>Level</label><input class="input" value="Master" /></div>
+                <div><label>Bitting</label><input class="input masked" value="••••••" /></div>
+                <div><label>Status</label><input class="input" value="Active" /></div>
+              </div>
+              <div class="btn-row"><button class="btn">Reveal</button><button class="btn">Compare</button><button class="btn warn">Mask</button></div>
+            </div>
+          </div>
+
+          <div style="height:12px"></div>
+          <div class="grid cols-2">
+            <div class="card">
+              <h3 class="card-title">Pinning Worksheet</h3>
+              <div class="pin-grid">
+                <div class="pin-head">Ch</div><div class="pin-head">1</div><div class="pin-head">2</div><div class="pin-head">3</div><div class="pin-head">4</div><div class="pin-head">5</div><div class="pin-head">6</div>
+                <div>Top</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div>
+                <div>Master</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div>
+                <div>Bottom</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div>
+              </div>
+            </div>
+            <div class="card">
+              <h3 class="card-title">Keyholder Ledger</h3>
+              <table class="table">
+                <tr><th>Holder</th><th>Key</th><th>Status</th></tr>
+                <tr><td>Janet H.</td><td>AA1-003</td><td><span class="chip good">Out</span></td></tr>
+                <tr><td>Volunteer A.</td><td>AA2-006</td><td><span class="chip bad">Lost</span></td></tr>
+                <tr><td>Facilities</td><td>AA1</td><td><span class="chip warn">Review</span></td></tr>
+              </table>
+            </div>
+          </div>
+
+          <div style="height:12px"></div>
+          <div class="grid cols-2">
+            <div class="report">
+              <h3 class="card-title">Report Preview</h3>
+              <table class="table">
+                <tr><th>Door</th><th>Cylinder</th><th>Keys</th></tr>
+                <tr><td>B-114</td><td>CYL-B114</td><td>AA1-003, AA1</td></tr>
+                <tr><td>B-115</td><td>CYL-B115</td><td>AA1-004, AA1</td></tr>
+              </table>
+            </div>
+            <div>
+              <div class="callout">Plaintext exports may expose a real physical access-control system. Use encrypted backup unless required.</div>
+              <div class="swatches">
+                <div class="swatch bg"></div><div class="swatch surface"></div><div class="swatch muted"></div><div class="swatch accent"></div><div class="swatch border"></div>
+              </div>
+              <p class="small-note">Swatches: background, card, muted surface, accent, border.</p>
+            </div>
+          </div>
+        </main>
+      </div>
+    </section>
+
+    <section class="theme light">
+      <div class="mock-shell">
+        <aside class="sidebar">
+          <div class="brand">
+            <div class="logo">K</div>
+            <div><div class="brand-title">KeyForge</div><div class="brand-sub">Light theme</div></div>
+          </div>
+          <div class="nav-label">Workspace</div>
+          <div class="nav-item active">Dashboard <span>⌘1</span></div>
+          <div class="nav-item">Key Systems <span>⌘2</span></div>
+          <div class="nav-item">Cylinders <span>⌘3</span></div>
+          <div class="nav-item">Keyholders <span>⌘4</span></div>
+          <div class="nav-item">Reports <span>⌘5</span></div>
+          <div class="nav-label">Security</div>
+          <div class="nav-item">Backup & Lock <span>⌘6</span></div>
+        </aside>
+        <main class="main">
+          <div class="theme-header">
+            <div class="theme-title"><h2>Light Professional Operations</h2><p>Soft off-white shell, white cards, slate text.</p></div>
+            <input class="search" placeholder="Search key, door, cylinder..." />
+          </div>
+
+          <div class="grid cols-3">
+            <div class="card"><div class="metric-label">Openings</div><div class="metric">186</div><span class="chip good">172 active</span></div>
+            <div class="card"><div class="metric-label">Cylinders</div><div class="metric">214</div><span class="chip warn">8 review</span></div>
+            <div class="card"><div class="metric-label">Lost keys</div><div class="metric">2</div><span class="chip bad">Rekey risk</span></div>
+          </div>
+
+          <div style="height:12px"></div>
+          <div class="split">
+            <div class="card">
+              <h3 class="card-title">Key System Tree</h3>
+              <div class="tree">
+                <div>▾ <span>GGM A</span></div>
+                <div>&nbsp;&nbsp;▾ <span>GM AA</span></div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;▾ <span class="selected">MK AA1</span></div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• <span>CK AA1-001</span></div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• <span>CK AA1-002</span></div>
+              </div>
+              <div class="btn-row"><button class="btn primary">Add Key</button><button class="btn">Reserve</button></div>
+            </div>
+            <div class="card">
+              <h3 class="card-title">Selected Key</h3>
+              <div class="form-grid">
+                <div><label>Symbol</label><input class="input" value="AA1" /></div>
+                <div><label>Level</label><input class="input" value="Master" /></div>
+                <div><label>Bitting</label><input class="input masked" value="••••••" /></div>
+                <div><label>Status</label><input class="input" value="Active" /></div>
+              </div>
+              <div class="btn-row"><button class="btn">Reveal</button><button class="btn">Compare</button><button class="btn warn">Mask</button></div>
+            </div>
+          </div>
+
+          <div style="height:12px"></div>
+          <div class="grid cols-2">
+            <div class="card">
+              <h3 class="card-title">Pinning Worksheet</h3>
+              <div class="pin-grid">
+                <div class="pin-head">Ch</div><div class="pin-head">1</div><div class="pin-head">2</div><div class="pin-head">3</div><div class="pin-head">4</div><div class="pin-head">5</div><div class="pin-head">6</div>
+                <div>Top</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div>
+                <div>Master</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div>
+                <div>Bottom</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div>
+              </div>
+            </div>
+            <div class="card">
+              <h3 class="card-title">Keyholder Ledger</h3>
+              <table class="table">
+                <tr><th>Holder</th><th>Key</th><th>Status</th></tr>
+                <tr><td>Janet H.</td><td>AA1-003</td><td><span class="chip good">Out</span></td></tr>
+                <tr><td>Volunteer A.</td><td>AA2-006</td><td><span class="chip bad">Lost</span></td></tr>
+                <tr><td>Facilities</td><td>AA1</td><td><span class="chip warn">Review</span></td></tr>
+              </table>
+            </div>
+          </div>
+
+          <div style="height:12px"></div>
+          <div class="grid cols-2">
+            <div class="report">
+              <h3 class="card-title">Report Preview</h3>
+              <table class="table">
+                <tr><th>Door</th><th>Cylinder</th><th>Keys</th></tr>
+                <tr><td>B-114</td><td>CYL-B114</td><td>AA1-003, AA1</td></tr>
+                <tr><td>B-115</td><td>CYL-B115</td><td>AA1-004, AA1</td></tr>
+              </table>
+            </div>
+            <div>
+              <div class="callout">Plaintext exports may expose a real physical access-control system. Use encrypted backup unless required.</div>
+              <div class="swatches">
+                <div class="swatch bg"></div><div class="swatch surface"></div><div class="swatch muted"></div><div class="swatch accent"></div><div class="swatch border"></div>
+              </div>
+              <p class="small-note">Swatches: background, card, muted surface, accent, border.</p>
+            </div>
+          </div>
+        </main>
+      </div>
+    </section>
+
+  </div>
+</div>
+</body>
+</html>
