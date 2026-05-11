@@ -201,3 +201,7 @@
 
 .report-surface .table th { color: #1d4ed8; }
 .report-footer { font-size: var(--text-xs); color: #475569; margin-top: var(--space-4); }
+
+.sensitive-actions {
+  margin-top: var(--space-2);
+}
