@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>KeyForge Local — UI Mockup</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --panel: #111827;
+    --panel2: #1f2937;
+    --panel3: #243244;
+    --text: #e5e7eb;
+    --muted: #94a3b8;
+    --line: #334155;
+    --accent: #60a5fa;
+    --good: #34d399;
+    --warn: #fbbf24;
+    --bad: #f87171;
+    --chip: #172554;
+    --paper: #f8fafc;
+    --ink: #0f172a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, #020617 0%, #0f172a 45%, #111827 100%);
+    color: var(--text);
+  }
+  .app {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: 100vh;
+  }
+  aside {
+    background: rgba(2,6,23,.88);
+    border-right: 1px solid var(--line);
+    padding: 22px 18px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+  }
+  .brand {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  .logo {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    background: radial-gradient(circle at 30% 20%, #93c5fd, #2563eb 45%, #172554);
+    display: grid;
+    place-items: center;
+    font-weight: 900;
+    color: white;
+    box-shadow: 0 14px 30px rgba(37,99,235,.3);
+  }
+  .brand h1 {
+    font-size: 18px;
+    margin: 0;
+    letter-spacing: -.02em;
+  }
+  .brand p {
+    margin: 2px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+  }
+  nav a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #cbd5e1;
+    text-decoration: none;
+    padding: 11px 12px;
+    border-radius: 12px;
+    margin: 4px 0;
+    font-size: 14px;
+  }
+  nav a.active, nav a:hover {
+    background: #172554;
+    color: white;
+  }
+  .nav-sub {
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin: 20px 10px 8px;
+  }
+  main {
+    padding: 24px;
+  }
+  .topbar {
+    display: flex;
+    gap: 16px;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+  }
+  .search {
+    flex: 1;
+    max-width: 720px;
+    background: rgba(15,23,42,.8);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 12px 16px;
+    color: var(--text);
+  }
+  .top-actions {
+    display: flex;
+    gap: 10px;
+  }
+  button, .button {
+    border: 1px solid var(--line);
+    background: var(--panel2);
+    color: var(--text);
+    padding: 10px 13px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 13px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  button.primary, .button.primary { background: #2563eb; border-color: #3b82f6; }
+  button.warn { background: #7c2d12; border-color: #f97316; }
+  button.danger { background: #7f1d1d; border-color: #ef4444; }
+  .grid {
+    display: grid;
+    gap: 16px;
+  }
+  .cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .card {
+    background: rgba(17,24,39,.86);
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    padding: 18px;
+    box-shadow: 0 18px 40px rgba(0,0,0,.22);
+  }
+  .card h2, .card h3 {
+    margin: 0 0 10px;
+    letter-spacing: -.02em;
+  }
+  .card h2 { font-size: 20px; }
+  .card h3 { font-size: 15px; color: #dbeafe; }
+  .muted { color: var(--muted); }
+  .metric {
+    font-size: 32px;
+    font-weight: 800;
+    margin-top: 4px;
+  }
+  .metric-label {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 9px;
+    border-radius: 999px;
+    background: var(--chip);
+    color: #bfdbfe;
+    font-size: 12px;
+    border: 1px solid rgba(96,165,250,.35);
+  }
+  .chip.good { background: rgba(6,78,59,.6); color: #a7f3d0; border-color: rgba(52,211,153,.35); }
+  .chip.warn { background: rgba(113,63,18,.6); color: #fde68a; border-color: rgba(251,191,36,.35); }
+  .chip.bad { background: rgba(127,29,29,.6); color: #fecaca; border-color: rgba(248,113,113,.35); }
+  .section {
+    margin: 28px 0 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+  }
+  .section h2 {
+    margin: 0;
+    font-size: 24px;
+    letter-spacing: -.03em;
+  }
+  .section p {
+    margin: 5px 0 0;
+    color: var(--muted);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th, td {
+    padding: 12px 10px;
+    border-bottom: 1px solid rgba(51,65,85,.7);
+    text-align: left;
+  }
+  th {
+    color: #93c5fd;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+  .masked {
+    letter-spacing: .25em;
+    color: #cbd5e1;
+    font-weight: 700;
+  }
+  .tree {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.9;
+  }
+  .tree span {
+    padding: 3px 7px;
+    border-radius: 8px;
+  }
+  .tree .sel {
+    background: #1d4ed8;
+    color: white;
+  }
+  .split {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 16px;
+  }
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  label {
+    display: block;
+    color: var(--muted);
+    font-size: 12px;
+    margin-bottom: 5px;
+  }
+  input, select, textarea {
+    width: 100%;
+    background: #0f172a;
+    color: var(--text);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  textarea { min-height: 84px; }
+  .pin-grid {
+    display: grid;
+    grid-template-columns: 80px repeat(6, 1fr);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .pin-grid div {
+    padding: 12px;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    min-height: 42px;
+  }
+  .pin-grid div:nth-child(7n) { border-right: none; }
+  .pin-head {
+    background: #172554;
+    color: #bfdbfe;
+    font-weight: 700;
+    font-size: 12px;
+  }
+  .view {
+    margin-bottom: 44px;
+    border-top: 1px solid rgba(148,163,184,.18);
+    padding-top: 18px;
+  }
+  .callout {
+    border: 1px solid rgba(251,191,36,.4);
+    background: rgba(113,63,18,.32);
+    border-radius: 18px;
+    padding: 14px 16px;
+    color: #fde68a;
+  }
+  .danger-zone {
+    border: 1px solid rgba(248,113,113,.35);
+    background: rgba(127,29,29,.22);
+    border-radius: 18px;
+    padding: 14px 16px;
+  }
+  .report-card {
+    background: var(--paper);
+    color: var(--ink);
+    border-radius: 18px;
+    padding: 20px;
+  }
+  .report-card h3 { color: var(--ink); }
+  .report-card table th { color: #1d4ed8; }
+  .report-card table td, .report-card table th { border-color: #cbd5e1; }
+  .footer-note {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 8px;
+  }
+  @media (max-width: 1100px) {
+    .app { grid-template-columns: 1fr; }
+    aside { height: auto; position: relative; }
+    .cols-4, .cols-3, .cols-2, .split { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="brand">
+      <div class="logo">K</div>
+      <div>
+        <h1>KeyForge Local</h1>
+        <p>Encrypted master key vault</p>
+      </div>
+    </div>
+    <nav>
+      <div class="nav-sub">Workspace</div>
+      <a class="active" href="#dashboard">Dashboard <span>⌘1</span></a>
+      <a href="#systems">Key Systems <span>⌘2</span></a>
+      <a href="#cylinders">Cylinders <span>⌘3</span></a>
+      <a href="#issuance">Keyholders <span>⌘4</span></a>
+      <a href="#rekey">Rekey <span>⌘5</span></a>
+      <a href="#reports">Reports <span>⌘6</span></a>
+      <div class="nav-sub">Security</div>
+      <a href="#backup">Backup & Lock <span>⌘7</span></a>
+      <a href="#migration">D1 Migration <span>⌘8</span></a>
+    </nav>
+  </aside>
+
+  <main>
+    <div class="topbar">
+      <input class="search" value="" placeholder="Search key symbol, door, cylinder, keyholder, site..." />
+      <div class="top-actions">
+        <button>Mask Sensitive</button>
+        <button class="warn">Lock Vault</button>
+        <button class="primary">New Rekey</button>
+      </div>
+    </div>
+
+    <section id="dashboard" class="view">
+      <div class="section">
+        <div>
+          <h2>Dashboard</h2>
+          <p>Local SQLite vault is unlocked. Bittings and pinning are masked by default.</p>
+        </div>
+        <span class="chip good">Local-only mode</span>
+      </div>
+      <div class="grid cols-4">
+        <div class="card"><div class="metric-label">Active key systems</div><div class="metric">4</div><span class="chip">1 selected</span></div>
+        <div class="card"><div class="metric-label">Openings</div><div class="metric">186</div><span class="chip good">172 active</span></div>
+        <div class="card"><div class="metric-label">Cylinders</div><div class="metric">214</div><span class="chip warn">8 need review</span></div>
+        <div class="card"><div class="metric-label">Outstanding keys</div><div class="metric">97</div><span class="chip bad">2 lost</span></div>
+      </div>
+
+      <div class="grid cols-2" style="margin-top:16px;">
+        <div class="card">
+          <h3>Security checklist</h3>
+          <table>
+            <tr><td>Last encrypted backup</td><td><span class="chip warn">9 changes ago</span></td></tr>
+            <tr><td>Auto-lock</td><td><span class="chip good">10 minutes</span></td></tr>
+            <tr><td>Plaintext exports</td><td><span class="chip good">None this session</span></td></tr>
+            <tr><td>Storage</td><td><span class="chip good">OPFS available</span></td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <h3>Recent activity</h3>
+          <table>
+            <tr><td>Updated pinning draft</td><td>Door B-114</td><td>Today</td></tr>
+            <tr><td>Issued key</td><td>AA1-012</td><td>Today</td></tr>
+            <tr><td>Marked lost</td><td>AA2-006</td><td>Yesterday</td></tr>
+            <tr><td>Created backup</td><td>Encrypted .mkdb</td><td>3 days ago</td></tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="systems" class="view">
+      <div class="section">
+        <div>
+          <h2>Key System View</h2>
+          <p>Tree structure, selected key details, bitting validation, and hierarchy controls.</p>
+        </div>
+        <button class="primary">Add Key</button>
+      </div>
+      <div class="split">
+        <div class="card">
+          <h3>Williamsburg Classical — Schlage LA</h3>
+          <div class="tree">
+            <div>▾ <span>GGM A</span></div>
+            <div>&nbsp;&nbsp;▾ <span>GM AA</span></div>
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;▾ <span class="sel">MK AA1</span></div>
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• <span>CK AA1-001</span></div>
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• <span>CK AA1-002</span></div>
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;• <span>CK AA1-003</span></div>
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;▸ <span>MK AA2</span></div>
+            <div>&nbsp;&nbsp;▸ <span>GM AB</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Selected Key: MK AA1</h3>
+          <div class="form-grid">
+            <div><label>Key Symbol</label><input value="AA1" /></div>
+            <div><label>Level</label><select><option>Master</option></select></div>
+            <div><label>Bitting</label><input value="••••••" /></div>
+            <div><label>Status</label><select><option>Active</option></select></div>
+            <div><label>MACS</label><input value="Valid" /></div>
+            <div><label>Duplicate Check</label><input value="No exact duplicate" /></div>
+          </div>
+          <div style="margin-top:14px;">
+            <button>Reveal Bitting</button>
+            <button>Compare Key</button>
+            <button>Reserve Child Symbol</button>
+          </div>
+          <p class="footer-note">Bitting values auto-mask when leaving the screen, locking, or timeout.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="cylinders" class="view">
+      <div class="section">
+        <div>
+          <h2>Cylinder & Pinning Worksheet</h2>
+          <p>Operating keys drive a draft pinning worksheet. Manual locksmith approval is required.</p>
+        </div>
+        <button class="primary">Generate Draft Pinning</button>
+      </div>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>Cylinder CYL-B114</h3>
+          <table>
+            <tr><td>Opening</td><td>Door B-114 / Storage Closet</td></tr>
+            <tr><td>Keyway</td><td>Schlage LA</td></tr>
+            <tr><td>Operating keys</td><td>AA1-003, AA1, AA, A</td></tr>
+            <tr><td>Status</td><td><span class="chip warn">Draft pinning</span></td></tr>
+            <tr><td>Cross-keyed</td><td><span class="chip good">No</span></td></tr>
+          </table>
+          <div style="margin-top:14px;">
+            <button>Add Operating Key</button>
+            <button>Mark Cross-Keyed</button>
+            <button>Version History</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Pinning Worksheet</h3>
+          <div class="pin-grid">
+            <div class="pin-head">Chamber</div><div class="pin-head">1</div><div class="pin-head">2</div><div class="pin-head">3</div><div class="pin-head">4</div><div class="pin-head">5</div><div class="pin-head">6</div>
+            <div>Top</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div>
+            <div>Master</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div>
+            <div>Bottom</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div><div class="masked">••</div>
+          </div>
+          <div style="margin-top:14px;">
+            <button>Reveal Worksheet</button>
+            <button class="primary">Approve Version</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="issuance" class="view">
+      <div class="section">
+        <div>
+          <h2>Keyholder Ledger</h2>
+          <p>Append-only issuance history with lost/stolen analysis.</p>
+        </div>
+        <button class="primary">Issue Key</button>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th>Keyholder</th><th>Key</th><th>Qty</th><th>Status</th><th>Issued</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>Janet H.</td><td>AA1-003</td><td>1</td><td><span class="chip good">Outstanding</span></td><td>2026-05-03</td><td><button>Return</button></td></tr>
+            <tr><td>Facilities</td><td>AA1</td><td>2</td><td><span class="chip good">Outstanding</span></td><td>2026-05-01</td><td><button>Audit</button></td></tr>
+            <tr><td>Volunteer A.</td><td>AA2-006</td><td>1</td><td><span class="chip bad">Lost</span></td><td>2026-04-22</td><td><button class="danger">Rekey Review</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="rekey" class="view">
+      <div class="section">
+        <div>
+          <h2>Rekey Wizard</h2>
+          <p>Scope, analyze, generate, review, commit, then back up.</p>
+        </div>
+        <span class="chip warn">Draft</span>
+      </div>
+      <div class="grid cols-3">
+        <div class="card">
+          <h3>1. Scope</h3>
+          <label>Reason</label><select><option>Lost key</option></select>
+          <label style="margin-top:10px;">Area</label><input value="Building B / Storage Wing" />
+        </div>
+        <div class="card">
+          <h3>2. Impact</h3>
+          <table>
+            <tr><td>Affected cylinders</td><td>12</td></tr>
+            <tr><td>Affected openings</td><td>11</td></tr>
+            <tr><td>Affected keyholders</td><td>4</td></tr>
+            <tr><td>Replacement keys</td><td>8</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <h3>3. Commit</h3>
+          <p class="muted">Final commit writes new pinning versions, retires selected keys, records audit events, and prompts encrypted backup.</p>
+          <button>Preview Packet</button>
+          <button class="primary">Commit Rekey</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="reports" class="view">
+      <div class="section">
+        <div>
+          <h2>Reports</h2>
+          <p>Reports have sensitivity levels. Restricted reports require explicit reveal.</p>
+        </div>
+        <button>Export Sanitized CSV</button>
+      </div>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>Report Library</h3>
+          <table>
+            <tr><td>Door Schedule</td><td><span class="chip">Restricted</span></td><td><button>Open</button></td></tr>
+            <tr><td>Pinning Worksheet</td><td><span class="chip bad">Critical</span></td><td><button>Reveal</button></td></tr>
+            <tr><td>Keyholder Report</td><td><span class="chip warn">Sensitive</span></td><td><button>Open</button></td></tr>
+            <tr><td>Audit Log</td><td><span class="chip">Internal</span></td><td><button>Open</button></td></tr>
+          </table>
+        </div>
+        <div class="report-card">
+          <h3>Door Schedule Preview</h3>
+          <table>
+            <tr><th>Door</th><th>Area</th><th>Cylinder</th><th>Keys</th></tr>
+            <tr><td>B-114</td><td>Storage</td><td>CYL-B114</td><td>AA1-003, AA1</td></tr>
+            <tr><td>B-115</td><td>Storage</td><td>CYL-B115</td><td>AA1-004, AA1</td></tr>
+            <tr><td>OFF-201</td><td>Admin</td><td>CYL-201</td><td>AB1-002, AB1</td></tr>
+          </table>
+          <p style="font-size:12px;margin-bottom:0;">Restricted — destroy when no longer needed.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="backup" class="view">
+      <div class="section">
+        <div>
+          <h2>Backup & Security</h2>
+          <p>Encrypted backup, restore, auto-lock, and plaintext export controls.</p>
+        </div>
+        <button class="primary">Export Encrypted Backup</button>
+      </div>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>Backup Status</h3>
+          <table>
+            <tr><td>Last backup</td><td>3 days ago</td></tr>
+            <tr><td>Changes since backup</td><td><span class="chip warn">9</span></td></tr>
+            <tr><td>Backup format</td><td>.mkdb encrypted vault</td></tr>
+            <tr><td>Plaintext DB export</td><td><span class="chip bad">Disabled by default</span></td></tr>
+          </table>
+          <div style="margin-top:14px;">
+            <button class="primary">Export .mkdb</button>
+            <button>Import .mkdb</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Session Security</h3>
+          <table>
+            <tr><td>Auto-lock</td><td>10 minutes</td></tr>
+            <tr><td>Reveal timeout</td><td>90 seconds</td></tr>
+            <tr><td>Panic mask</td><td>Enabled</td></tr>
+            <tr><td>Storage</td><td>Browser OPFS</td></tr>
+          </table>
+          <div style="margin-top:14px;">
+            <button>Change Timeout</button>
+            <button class="warn">Lock Now</button>
+          </div>
+        </div>
+      </div>
+      <div class="callout" style="margin-top:16px;">
+        Plaintext exports may expose a real physical access-control system. Use encrypted backup unless you have a specific operational reason.
+      </div>
+    </section>
+
+    <section id="migration" class="view">
+      <div class="section">
+        <div>
+          <h2>D1 Migration Posture</h2>
+          <p>The local app is built with tenant IDs, stable UUIDs, repository interfaces, and a change log.</p>
+        </div>
+        <span class="chip good">SaaS-ready foundation</span>
+      </div>
+      <div class="grid cols-3">
+        <div class="card">
+          <h3>Version 1</h3>
+          <p class="muted">Local SQLite, encrypted backup, one default tenant.</p>
+          <table>
+            <tr><td>Backend</td><td>None</td></tr>
+            <tr><td>Storage</td><td>Browser OPFS</td></tr>
+            <tr><td>Cost</td><td>$0</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <h3>Bridge</h3>
+          <p class="muted">Encrypted cloud backup through Worker. No server-side decryption.</p>
+          <table>
+            <tr><td>Worker</td><td>Backup API</td></tr>
+            <tr><td>D1</td><td>Backup metadata</td></tr>
+            <tr><td>Blob</td><td>Encrypted .mkdb</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <h3>Version 2 SaaS</h3>
+          <p class="muted">Encrypted record sync, tenant boundary, roles, billing.</p>
+          <table>
+            <tr><td>Worker</td><td>Auth + Sync</td></tr>
+            <tr><td>D1</td><td>Encrypted records</td></tr>
+            <tr><td>Billing</td><td>Subscription</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="danger-zone" style="margin-top:16px;">
+        SaaS warning: Do not store raw bittings, pinning, door mappings, or keyholder data in D1 plaintext. Treat the cloud database as a sync ledger for encrypted tenant data.
+      </div>
+    </section>
+
+  </main>
+</div>
+</body>
+</html>
