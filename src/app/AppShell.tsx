@@ -1,31 +1,39 @@
 import { useEffect, type ReactNode } from 'react';
+import type { AppRoute } from './routes';
+import { navigationItems, routeToHash } from './navigation';
+import { buildUnlockRoute, isProtectedRoute } from './securityState';
+import type { ThemePreference } from './theme';
 import { useLockState } from './LockProvider';
-import { buildUnlockRoute, isProtectedRoute, normalizeRoute } from './securityState';
 import { LockButton } from '../ui/LockButton';
 
 export function AppShell({
-  route,
-  onNavigate,
+  activeRoute,
   title,
-  subtitle,
-  actions,
+  description,
+  currentPath,
+  themePreference,
+  onThemePreferenceChange,
+  onNavigate,
+  onMaskSensitive,
   children,
 }: {
-  readonly route: string;
-  readonly onNavigate: (route: string) => void;
+  readonly activeRoute: AppRoute;
   readonly title: string;
-  readonly subtitle: string;
-  readonly actions: ReactNode;
+  readonly description: string;
+  readonly currentPath: string;
+  readonly themePreference: ThemePreference;
+  readonly onThemePreferenceChange: (preference: ThemePreference) => void;
+  readonly onNavigate: (path: string) => void;
+  readonly onMaskSensitive: () => void;
   readonly children: ReactNode;
 }) {
   const { isLocked, status, resetAutoLockTimer } = useLockState();
-  const activeRoute = normalizeRoute(route);
 
   useEffect(() => {
-    if (isLocked && isProtectedRoute(activeRoute)) {
-      onNavigate(buildUnlockRoute(activeRoute));
+    if (isLocked && isProtectedRoute(activeRoute.id) && !currentPath.replace(/^\//, '').startsWith('unlock')) {
+      onNavigate(buildUnlockRoute(activeRoute.id));
     }
-  }, [activeRoute, isLocked, onNavigate]);
+  }, [activeRoute.id, currentPath, isLocked, onNavigate]);
 
   return (
     <div className="app-shell" onPointerDown={resetAutoLockTimer} onKeyDown={resetAutoLockTimer}>
@@ -34,7 +42,7 @@ export function AppShell({
           <div className="sidebar-logo" aria-hidden="true">K</div>
           <div>
             <strong className="text-strong">KeyForge Local</strong>
-            <div className="help-text">Encrypted master key vault</div>
+            <div className="help-text">Secure locksmithing workspace</div>
           </div>
         </div>
 
@@ -43,43 +51,51 @@ export function AppShell({
           <LockButton />
         </div>
 
-        <nav>
-          <div className="sidebar-nav-section">Foundation</div>
-          <NavLink route="dashboard" activeRoute={activeRoute} onNavigate={onNavigate}>Dashboard <span>⌘1</span></NavLink>
-          <NavLink route="boundaries" activeRoute={activeRoute} onNavigate={onNavigate}>Boundaries <span>⌘2</span></NavLink>
-          <NavLink route="security" activeRoute={activeRoute} onNavigate={onNavigate}>Security <span>⌘3</span></NavLink>
-          <NavLink route="reports" activeRoute={activeRoute} onNavigate={onNavigate}>Reports <span>⌘4</span></NavLink>
-          <div className="sidebar-nav-section">Future</div>
-          <NavLink route="migration" activeRoute={activeRoute} onNavigate={onNavigate}>D1 Posture <span>⌘5</span></NavLink>
+        <nav aria-label="Version 1 modules">
+          <div className="sidebar-nav-section">Version 1</div>
+          {navigationItems.map((item) => (
+            <a
+              aria-current={activeRoute.id === item.id ? 'page' : undefined}
+              className={`sidebar-nav-link ${activeRoute.id === item.id ? 'active' : ''}`}
+              href={routeToHash(item.path)}
+              key={item.id}
+            >
+              {item.label}
+              <span aria-hidden="true">⌘{item.shortcut}</span>
+            </a>
+          ))}
         </nav>
       </aside>
 
-      <main className="main-shell">
+      <main className="main-shell" id="main-content">
         <header className="topbar no-print">
           <div>
             <h1 className="page-title">{title}</h1>
-            <p className="help-text">{subtitle}</p>
+            <p className="help-text">{description}</p>
           </div>
-          <div className="cluster" role="group" aria-label="Application controls">{actions}</div>
+          <div className="cluster" role="group" aria-label="Application controls">
+            <a className="btn btn-ghost" href="#main-content">Skip to content</a>
+            <label className="form-field">
+              <span>Theme</span>
+              <select
+                className="select"
+                value={themePreference}
+                onChange={(event) => onThemePreferenceChange(event.target.value as ThemePreference)}
+                aria-label="Theme preference"
+              >
+                <option value="system">System</option>
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+              </select>
+            </label>
+            <button className="btn btn-warning" type="button" onClick={onMaskSensitive} aria-label="Mask sensitive placeholder reveals">
+              Masked placeholders
+            </button>
+          </div>
         </header>
 
         {children}
       </main>
     </div>
-  );
-}
-
-function NavLink({ route, activeRoute, onNavigate, children }: { readonly route: string; readonly activeRoute: string; readonly onNavigate: (route: string) => void; readonly children: ReactNode }) {
-  return (
-    <a
-      className={`sidebar-nav-link ${activeRoute === route ? 'active' : ''}`}
-      href={`#${route}`}
-      onClick={(event) => {
-        event.preventDefault();
-        onNavigate(route);
-      }}
-    >
-      {children}
-    </a>
   );
 }

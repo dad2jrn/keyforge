@@ -1,22 +1,33 @@
+import type { AppRouteId } from './navigation';
+
 export type LockStatus = 'locked' | 'unlocked';
 
 export const unlockRoute = 'unlock';
 
-export const protectedRoutes = new Set(['reports', 'security']);
+const protectedRouteIds = new Set<AppRouteId>(['reports', 'backup-security']);
+const legacyProtectedRoutes = new Set(['security']);
 
-export const defaultProtectedRoute = 'dashboard';
+export const defaultProtectedRoute = '/';
 
-export function normalizeRoute(route: string): string {
-  const trimmedRoute = route.replace(/^#/, '').split('?')[0]?.trim() ?? '';
-  return trimmedRoute.length > 0 ? trimmedRoute : defaultProtectedRoute;
+export function normalizeSecurityRoute(route: string): string {
+  const withoutHash = route.replace(/^#/, '').trim();
+  const path = withoutHash.split('?')[0] ?? defaultProtectedRoute;
+  if (path === '' || path === '/') return defaultProtectedRoute;
+  return path.startsWith('/') ? path : `/${path}`;
+}
+
+export function normalizeSecurityRouteId(route: string): string {
+  const normalizedPath = normalizeSecurityRoute(route);
+  return normalizedPath === '/' ? 'dashboard' : normalizedPath.replace(/^\//, '');
 }
 
 export function isProtectedRoute(route: string): boolean {
-  return protectedRoutes.has(normalizeRoute(route));
+  const routeId = normalizeSecurityRouteId(route);
+  return protectedRouteIds.has(routeId as AppRouteId) || legacyProtectedRoutes.has(routeId);
 }
 
 export function buildUnlockRoute(returnTo: string): string {
-  return `${unlockRoute}?returnTo=${encodeURIComponent(normalizeRoute(returnTo))}`;
+  return `${unlockRoute}?returnTo=${encodeURIComponent(returnTo)}`;
 }
 
 export function readReturnTo(route: string): string {
@@ -24,5 +35,5 @@ export function readReturnTo(route: string): string {
   if (!query) return defaultProtectedRoute;
 
   const params = new URLSearchParams(query);
-  return normalizeRoute(params.get('returnTo') ?? defaultProtectedRoute);
+  return params.get('returnTo') ?? defaultProtectedRoute;
 }
