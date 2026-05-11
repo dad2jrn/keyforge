@@ -1,0 +1,40 @@
+{
+  "name": "keyforge-local",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && npm run scan:sensitive && npm run scan:samples && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "scan:sensitive": "node scripts/scan-sensitive-files.mjs",
+    "scan:samples": "node scripts/scan-sample-data.mjs",
+    "prepare-hooks": "node scripts/install-git-hooks.mjs"
+  },
+  "dependencies": {
+    "@sqlite.org/sqlite-wasm": "^3.53.0-build1",
+    "@vitejs/plugin-react": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "typescript": "latest",
+    "vite": "latest"
+  },
+  "devDependencies": {
+    "@eslint/js": "latest",
+    "@testing-library/jest-dom": "latest",
+    "@testing-library/react": "latest",
+    "@testing-library/user-event": "latest",
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "eslint": "latest",
+    "eslint-plugin-react-hooks": "latest",
+    "eslint-plugin-react-refresh": "latest",
+    "globals": "latest",
+    "jsdom": "latest",
+    "typescript-eslint": "latest",
+    "vitest": "latest"
+  }
+}

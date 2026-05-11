@@ -1,3 +1,15 @@
+# Dependencies and build output
+node_modules/
+dist/
+coverage/
+.vite/
+*.tsbuildinfo
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
 # Visual Studio Code
 .vscode/*
 !.vscode/settings.json
@@ -10,6 +22,31 @@
 # Built Visual Studio Code Extensions
 *.vsix
 
-
+# Planning files intentionally local-only
 PLAN.md
 STYLE.md
+
+# Sensitive KeyForge data - never commit operational data
+*.sqlite
+*.sqlite3
+*.db
+*.db3
+*.mkdb
+*.csv
+*.tsv
+*.xlsx
+*.xls
+*.ods
+*.numbers
+*.bak
+*.backup
+*.dump
+*.sql
+*.zip
+*.7z
+*.rar
+*.tar
+*.gz
+
+# OS files
+.DS_Store

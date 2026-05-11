@@ -1,0 +1,26 @@
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #111827 !important;
+  }
+
+  .sidebar,
+  .topbar,
+  .no-print {
+    display: none !important;
+  }
+
+  .app-shell {
+    display: block;
+    background: #ffffff !important;
+  }
+
+  .main-shell {
+    padding: 0;
+  }
+
+  .report-surface {
+    box-shadow: none !important;
+    border: none !important;
+  }
+}
